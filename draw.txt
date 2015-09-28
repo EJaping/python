@@ -1,0 +1,181 @@
+# Draw a circle or a square, change it's size and color, change the background.
+# Optional grid to help you draw.
+# Next step: a diamond
+
+import simplegui
+
+# Global variables
+canvas_width = 700
+canvas_height = 600
+
+new_color = "Green"
+radius = 15
+shape = "Circle"
+
+shape_list = []
+
+grid = False
+size = True
+
+# Choose shape
+def to_circle():
+    global shape
+    shape = "Circle"
+
+def to_square():
+    global shape
+    shape = "Square"
+    
+def to_diamond():
+    global shape
+    shape = "Diamond"
+
+# Change the color of the shape
+def to_green():
+    global new_color
+    new_color = "Green"
+
+def to_blue():
+    global new_color
+    new_color = "Blue"
+    
+def to_purple():
+    global new_color
+    new_color = "Purple"
+    
+def to_red():
+    global new_color
+    new_color = "Red"
+    
+def to_orange():
+    global new_color
+    new_color = "Orange"
+    
+def to_yellow():
+    global new_color
+    new_color = "Yellow"
+
+# Change the color of the background
+def to_black():
+    frame.set_canvas_background("Black")
+
+def to_white():
+    frame.set_canvas_background("White")
+
+# Make the circle bigger or smaller
+def change_size(key):
+    global radius
+    if key == simplegui.KEY_MAP['up']:
+        if radius < 200:
+            radius += 5
+            shape_list[-1] [2] = radius
+        else:
+            pass
+    
+    if key == simplegui.KEY_MAP['down']:
+        if radius > 5:
+            radius -= 5
+            shape_list[-1] [2] = radius
+        else:
+            pass
+
+def show_size():
+    global size
+    size = not size
+    
+# Toggle grid
+def set_grid():
+    global grid
+    grid = not grid
+
+# Remove the last shape in the list
+def clear_last():
+    if len(shape_list) > 0:
+        shape_list.pop(-1)
+
+# Clear the canvas
+def clear_canvas():
+    global shape_list
+    shape_list = []
+    
+# Mouseclick  
+def click(pos):
+    shape_list.append([pos[0], pos[1], radius, new_color, shape])
+
+# Draw    
+def draw(canvas):
+
+    for shape in shape_list:
+        if shape[4] == "Circle":
+            canvas.draw_circle((shape[0], shape[1]), shape[2], 3, shape[3])
+            
+        if shape[4] == "Square":
+            canvas.draw_polygon([(shape[0] - shape[2], shape[1] - shape[2]), 
+                                 (shape[0] - shape[2], shape[1] + shape[2]), 
+                                 (shape[0] + shape[2], shape[1] + shape[2]), 
+                                 (shape[0] + shape[2], shape[1] - shape[2])], 3, shape[3])    
+
+        if shape[4] == "Diamond":
+            canvas.draw_polygon([(shape[0], shape[1] - shape[2]), 
+                                 (shape[0] + shape[2], shape[1]), 
+                                 (shape[0], shape[1] + shape[2]), 
+                                 (shape[0] - shape[2], shape[1])], 3, shape[3])
+            
+    # Draw radius
+    if size:
+        canvas.draw_text(("Size: " + str(radius)), (595, 585), 20, new_color)
+    
+    # Draw grid
+    if grid:
+        x_list = range(50, canvas_width, 50)
+        y_list = range(50, canvas_height, 50)
+        
+        for x in x_list:
+            canvas.draw_line((x, 0), (x, canvas_height), 0.5, "Grey")
+            
+        for y in y_list:
+            canvas.draw_line((0, y), (canvas_width, y), 0.5, "Grey")
+    
+#Create frame    
+frame = simplegui.create_frame("Draw a shape", canvas_width, canvas_height)
+
+# Labels and buttons
+info = frame.add_label("Choose shape:")
+frame.add_button("Circle", to_circle, 100)
+frame.add_button("Square", to_square, 100)
+frame.add_button("Diamond", to_diamond, 100)
+info = frame.add_label("")
+
+info = frame.add_label("Choose color:")
+frame.add_button("Green", to_green, 100)
+frame.add_button("Blue", to_blue, 100)
+frame.add_button("Purple", to_purple, 100)
+frame.add_button("Red", to_red, 100)
+frame.add_button("Orange", to_orange, 100)
+frame.add_button("Yellow", to_yellow, 100)
+info = frame.add_label("")
+
+info = frame.add_label("Change size with 'up' and 'down' keys")
+frame.add_button("Show size", show_size, 100)
+info = frame.add_label("")
+
+info = frame.add_label("Change background:")
+frame.add_button("Black", to_black, 100)
+frame.add_button("White", to_white, 100)
+info = frame.add_label("")
+
+info = frame.add_label("Set grid:")
+frame.add_button("On/Off", set_grid, 100)
+info = frame.add_label("")
+
+frame.add_button("Remove last", clear_last, 100)
+frame.add_button("Clear canvas", clear_canvas, 100)
+
+# Set handlers
+frame.set_keydown_handler(change_size)
+frame.set_mouseclick_handler(click)
+frame.set_draw_handler(draw)
+
+#Start frame
+frame.start()
+
